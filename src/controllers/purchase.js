@@ -63,7 +63,7 @@ module.exports = {
             #swagger.summary = "Get Single Purchase"
         */
 
-    const data = await Purchase.findOne({ _id: req.params.id });
+    const data = await Purchase.findOne({ _id: req.params.id }).populate(['userId', 'firmId', 'brandId', 'productId']);
 
     res.status(200).send({
       error: false,
