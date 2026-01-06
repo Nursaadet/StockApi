@@ -57,7 +57,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       trim: true,
       required: true,
-      uniqu: true,
+      unique: true,
       index: true,
     },
 
@@ -97,6 +97,8 @@ const UserSchema = new mongoose.Schema(
 /* ------------------------------------------------------- */
 // https://mongoosejs.com/docs/middleware.html
 
+const passwordEncrypt = require("../helpers/passwordEncrypt");
+
 UserSchema.pre("save", function (next) {
   // console.log('pre-save çalıştı.')
   // console.log(this)
@@ -118,7 +120,7 @@ UserSchema.pre("save", function (next) {
       : true;
 
     if (isPasswordValidated) {
-      console.log("Password is OK.");
+      this.password = passwordEncrypt(data.password)
     } else {
       // throw new Error('Password is not validated.')
       next(new Error("Password is not validated."));
