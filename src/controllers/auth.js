@@ -1,19 +1,18 @@
-"use strict"
+"use strict";
 /* -------------------------------------------------------
     | FULLSTACK TEAM | NODEJS / EXPRESS |
 ------------------------------------------------------- */
 
-const User = require('../models/user')
-const Token = require('../models/token')
+const User = require("../models/user");
+const Token = require("../models/token");
 
-const passwordEncrypt = require('../helpers/passwordEncrypt')
+const passwordEncrypt = require("../helpers/passwordEncrypt");
 
-const jwt = require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
 
 module.exports = {
-
-    login: async (req, res) => {
-        /*
+  login: async (req, res) => {
+    /*
             #swagger.tags = ["Authentication"]
             #swagger.summary = "Login"
             #swagger.description = 'Login with username (or email) and password for get Token and JWT.'
@@ -27,27 +26,54 @@ module.exports = {
             }
         */
 
-        const { username, email, password } = req.body
+    const { username, email, password } = req.body;
 
-        if ((username || email) && password) {
+    if ((username || email) && password) {
+      const user = await User.findOne({ $or: [{ email }, { username }] });
 
-            const user = await User.findOne({ $or: [{ email }, { username }] })
+      if (user && user.password == passwordEncrypt(password)) {
+        if (user.isActive) {
+          // Simple TOKEN:
+          let tokenData = await Token.findOne({ userId: user._id });
+          if (!tokenData) {
+            tokenData = await Token.create({
+              userId: user._id,
+              token: passwordEncrypt(user._id + Date.now()),
+            });
+          }
 
-            if (user && user.password == password)
+          // JWT:
+          const accessToken = jwt.sign(user.toJSON(), process.env.ACCESS_KEY, {
+            expiresIn: "30m",
+          });
+          const refreshToken = jwt.sign(
+            { _id: user._id, password: user.password },
+            process.env.REFRESH_KEY,
+            { expiresIn: "3d" }
+          );
 
+          // res.send()
+          res.status(200).send({
+            error: false,
+            token: tokenData.token,
+            bearer: { accessToken, refreshToken },
+            user,
+          });
         } else {
-
-            res.errorStatusCode = 401
-            throw new Error('Please enter username/email and password.')
+          res.errorStatusCode = 401;
+          throw new Error("This account is not active.");
         }
-    },
+      } else {
+        res.errorStatusCode = 401;
+        throw new Error("Wrong username/email or password.");
+      }
+    } else {
+      res.errorStatusCode = 401;
+      throw new Error("Please enter username/email and password.");
+    }
+  },
 
-    refresh: async (req, res) => {
+  refresh: async (req, res) => {},
 
-    },
-
-    logout: async (req, res) => {
-
-    },
-
-}
+  logout: async (req, res) => {},
+};
