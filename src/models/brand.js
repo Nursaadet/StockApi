@@ -28,3 +28,6 @@ const BrandSchema = new mongoose.Schema({
     collection: 'brands',
     timestamps: true
 })
+
+/* ------------------------------------------------------- */
+module.exports = mongoose.model('Brand', BrandSchema)
