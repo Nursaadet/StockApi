@@ -9,7 +9,7 @@
     "debug": "DEBUG=express nodemon"
   },
   "keywords": [],
-  "author": "CourseName",
+  "author": "Saadet",
   "license": "ISC Licence",
   "dependencies": {
     "dotenv": "^17.2.3",
