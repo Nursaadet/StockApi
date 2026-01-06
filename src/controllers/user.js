@@ -15,6 +15,7 @@ const jwt = require("jsonwebtoken");
 
 // data = req.body
 const checkUserEmailAndPassword = function (data) {
+  return data;
   // Email Control:
   const isEmailValidated = data.email
     ? /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(data.email)
