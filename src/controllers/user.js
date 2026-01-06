@@ -7,7 +7,7 @@
 const User = require("../models/user");
 
 /* ------------------------------------------------------- */
-
+const passwordEncrypt = require("../helpers/passwordEncrypt");
 // data = req.body
 const checkUserEmailAndPassword = function (data) {
   // Email Control:
@@ -23,6 +23,9 @@ const checkUserEmailAndPassword = function (data) {
       : true;
 
     if (isPasswordValidated) {
+       data.password = passwordEncrypt(data.password)
+
+            return data
     } else {
       throw new Error("Password is not validated.");
     }
