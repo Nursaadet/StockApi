@@ -109,11 +109,23 @@ UserSchema.pre("save", function (next) {
     : true;
 
   if (isEmailValidated) {
-    console.log("Email is OK");
+    // console.log('Email is OK')
+
+    const isPasswordValidated = data.password
+      ? /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/.test(
+          data.password
+        )
+      : true;
+
+    if (isPasswordValidated) {
+      console.log("Password is OK.");
+    } else {
+      // throw new Error('Password is not validated.')
+      next(new Error("Password is not validated."));
+    }
   } else {
     // throw new Error('Email is not validated.')
     next(new Error("Email is not validated."));
   }
-  // next()
 });
 module.exports = mongoose.model("User", UserSchema);
