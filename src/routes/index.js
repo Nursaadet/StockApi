@@ -15,8 +15,8 @@ router.use("/users", require("./user"));
 // token:
 router.use("/tokens", require("./token"));
 
-// // brand:
-// router.use('/brands', require('./brand'))
+// brand:
+router.use("/brands", require("./brand"));
 // // category:
 // router.use('/categories', require('./category'))
 // // firm:
