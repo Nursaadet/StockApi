@@ -93,4 +93,27 @@ const UserSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+/* ------------------------------------------------------- */
+// https://mongoosejs.com/docs/middleware.html
+
+UserSchema.pre("save", function (next) {
+  // console.log('pre-save çalıştı.')
+  // console.log(this)
+
+  const data = this;
+
+  // Email Control:
+  const isEmailValidated = data.email
+    ? /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(data.email)
+    : true;
+
+  if (isEmailValidated) {
+    console.log("Email is OK");
+  } else {
+    // throw new Error('Email is not validated.')
+    next(new Error("Email is not validated."));
+  }
+  // next()
+});
 module.exports = mongoose.model("User", UserSchema);
