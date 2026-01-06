@@ -99,11 +99,12 @@ const UserSchema = new mongoose.Schema(
 
 const passwordEncrypt = require("../helpers/passwordEncrypt");
 
-UserSchema.pre("save", function (next) {
+UserSchema.pre(["save", "updateOne"], function (next) {
   // console.log('pre-save çalıştı.')
   // console.log(this)
 
-  const data = this;
+  // Güncellerken: data = this._update || Kaydederken: data = this
+  const data = this?._update ?? this;
 
   // Email Control:
   const isEmailValidated = data.email
@@ -120,7 +121,8 @@ UserSchema.pre("save", function (next) {
       : true;
 
     if (isPasswordValidated) {
-      this.password = passwordEncrypt(data.password)
+      this.password = passwordEncrypt(data.password);
+      next();
     } else {
       // throw new Error('Password is not validated.')
       next(new Error("Password is not validated."));
