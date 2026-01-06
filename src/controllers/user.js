@@ -7,7 +7,9 @@
 const User = require("../models/user");
 
 /* ------------------------------------------------------- */
+
 const passwordEncrypt = require("../helpers/passwordEncrypt");
+
 // data = req.body
 const checkUserEmailAndPassword = function (data) {
   // Email Control:
@@ -23,9 +25,9 @@ const checkUserEmailAndPassword = function (data) {
       : true;
 
     if (isPasswordValidated) {
-       data.password = passwordEncrypt(data.password)
+      data.password = passwordEncrypt(data.password);
 
-            return data
+      return data;
     } else {
       throw new Error("Password is not validated.");
     }
@@ -78,7 +80,8 @@ module.exports = {
             }
         */
 
-    const data = await User.create(req.body);
+    // const data = await User.create(req.body)
+    const data = await User.create(checkUserEmailAndPassword(req.body));
 
     res.status(201).send({
       error: false,
@@ -117,10 +120,12 @@ module.exports = {
             }
         */
 
-    // const data = await User.findByIdAndUpdate(req.params.id, req.body, { runValidators: true })
-    const data = await User.updateOne({ _id: req.params.id }, req.body, {
-      runValidators: true,
-    });
+    // const data = await User.updateOne({ _id: req.params.id }, req.body, { runValidators: true })
+    const data = await User.updateOne(
+      { _id: req.params.id },
+      checkUserEmailAndPassword(req.body),
+      { runValidators: true }
+    );
 
     res.status(202).send({
       error: false,
