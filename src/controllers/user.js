@@ -16,6 +16,7 @@ const jwt = require("jsonwebtoken");
 // data = req.body
 const checkUserEmailAndPassword = function (data) {
   return data;
+
   // Email Control:
   const isEmailValidated = data.email
     ? /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(data.email)
@@ -105,7 +106,6 @@ module.exports = {
       process.env.REFRESH_KEY,
       { expiresIn: "3d" }
     );
-
     /* AUTO LOGIN */
 
     res.status(201).send({
@@ -121,6 +121,9 @@ module.exports = {
             #swagger.tags = ["Users"]
             #swagger.summary = "Get Single User"
         */
+
+    // Admin olmayan başkasınıın kaydına erişemez:
+    req.params.id = req.user.isAdmin ? req.params.id : req.user._id;
 
     const data = await User.findOne({ _id: req.params.id });
 
@@ -146,6 +149,9 @@ module.exports = {
                 }
             }
         */
+
+    // Admin olmayan başkasınıın kaydına erişemez:
+    req.params.id = req.user.isAdmin ? req.params.id : req.user._id;
 
     // const data = await User.updateOne({ _id: req.params.id }, req.body, { runValidators: true })
     const data = await User.updateOne(
