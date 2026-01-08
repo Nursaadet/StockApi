@@ -22,7 +22,11 @@ module.exports = {
             `
         */
 
-    const data = await res.getModelList(Sale, {}, ['userId', 'brandId', 'productId'])
+    const data = await res.getModelList(Sale, {}, [
+      "userId",
+      "brandId",
+      "productId",
+    ]);
 
     res.status(200).send({
       error: false,
@@ -44,6 +48,9 @@ module.exports = {
             }
         */
 
+    // Set userId from logined user:
+    req.body.userId = req.user._id;
+
     const data = await Sale.create(req.body);
 
     res.status(201).send({
@@ -58,7 +65,11 @@ module.exports = {
             #swagger.summary = "Get Single Sale"
         */
 
-    const data = await Sale.findOne({ _id: req.params.id }).populate(['userId', 'brandId', 'productId'])
+    const data = await Sale.findOne({ _id: req.params.id }).populate([
+      "userId",
+      "brandId",
+      "productId",
+    ]);
 
     res.status(200).send({
       error: false,

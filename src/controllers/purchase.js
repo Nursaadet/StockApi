@@ -49,6 +49,9 @@ module.exports = {
             }
         */
 
+    // Set userId from logined user:
+    req.body.userId = req.user._id;
+
     const data = await Purchase.create(req.body);
 
     res.status(201).send({
@@ -63,7 +66,12 @@ module.exports = {
             #swagger.summary = "Get Single Purchase"
         */
 
-    const data = await Purchase.findOne({ _id: req.params.id }).populate(['userId', 'firmId', 'brandId', 'productId']);
+    const data = await Purchase.findOne({ _id: req.params.id }).populate([
+      "userId",
+      "firmId",
+      "brandId",
+      "productId",
+    ]);
 
     res.status(200).send({
       error: false,
