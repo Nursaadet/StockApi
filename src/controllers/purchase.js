@@ -109,6 +109,8 @@ module.exports = {
         { _id: currentPurchase.productId },
         { $inc: { quantity: +difference } }
       );
+      // productId değişmemeli:
+      req.body.productId = currentPurchase.productId;
     }
     // Update:
     const data = await Purchase.updateOne({ _id: req.params.id }, req.body, {

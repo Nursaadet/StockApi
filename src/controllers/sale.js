@@ -123,6 +123,8 @@ module.exports = {
         res.errorStatusCode = 422;
         throw new Error("There is not enough product-quantity for this sale.");
       }
+      // productId değişmemeli:
+      req.body.productId = currentPurchase.productId;
     }
     // Update:
     const data = await Sale.updateOne({ _id: req.params.id }, req.body, {
