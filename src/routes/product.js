@@ -8,7 +8,11 @@ const router = require("express").Router();
 
 const product = require("../controllers/product");
 
+const permissions = require("../middlewares/permissions");
+
 // URL: /products
+
+router.use(permissions.isStaff);
 
 router.route("/").get(product.list).post(product.create);
 
