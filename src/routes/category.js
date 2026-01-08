@@ -8,7 +8,11 @@ const router = require("express").Router();
 
 const category = require("../controllers/category");
 
+const permissions = require("../middlewares/permissions");
+
 // URL: /categorys
+
+router.use(permissions.isAdmin);
 
 router.route("/").get(category.list).post(category.create);
 
