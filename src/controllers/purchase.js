@@ -5,6 +5,7 @@
 // Purchase Controllers:
 
 const Purchase = require("../models/purchase");
+const Product = require("../models/product");
 
 module.exports = {
   list: async (req, res) => {
@@ -54,6 +55,12 @@ module.exports = {
 
     const data = await Purchase.create(req.body);
 
+    // Satınalma sonrası ürün adetini arttır:
+    const updateProduct = await Product.updateOne(
+      { _id: data.productId },
+      { $inc: { quantity: +data.quantity } }
+    );
+
     res.status(201).send({
       error: false,
       data,
@@ -91,6 +98,18 @@ module.exports = {
                 }
             }
         */
+
+    if (req.body?.quantity) {
+      // Mevcut işlemdeki adet bilgisi al:
+      const currentPurchase = await Purchase.findOne({ _id: req.params.id });
+      // Farkı hesapla:
+      const difference = req.body.quantity - currentPurchase.quantity;
+      // Farkı Producta yansıt:
+      const updateProduct = await Product.updateOne(
+        { _id: currentPurchase.productId },
+        { $inc: { quantity: +difference } }
+      );
+    }
 
     const data = await Purchase.updateOne({ _id: req.params.id }, req.body, {
       runValidators: true,
