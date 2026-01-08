@@ -110,7 +110,7 @@ module.exports = {
         { $inc: { quantity: +difference } }
       );
     }
-
+    // Update:
     const data = await Purchase.updateOne({ _id: req.params.id }, req.body, {
       runValidators: true,
     });
@@ -128,7 +128,17 @@ module.exports = {
             #swagger.summary = "Delete Purchase"
         */
 
+    // Mevcut işlemdeki adet bilgisi al:
+    const currentPurchase = await Purchase.findOne({ _id: req.params.id });
+
+    // Delete:
     const data = await Purchase.deleteOne({ _id: req.params.id });
+
+    // Product quantity'den adeti eksilt:
+    const updateProduct = await Product.updateOne(
+      { _id: currentPurchase.productId },
+      { $inc: { quantity: -currentPurchase.quantity } }
+    );
 
     res.status(data.deletedCount ? 204 : 404).send({
       error: !data.deletedCount,
